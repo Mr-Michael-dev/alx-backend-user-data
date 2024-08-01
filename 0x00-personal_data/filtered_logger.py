@@ -1,14 +1,10 @@
 #!/usr/bin/env python3
 """
-contains a function called filter_datum that returns the log message obfuscated
+Contains a function called filter_datum that returns the log message obfuscated.
 """
 import re
 
-
-def filter_datum(fields: list, redaction: str,
-                 message: str, seperator: str) -> str:
+def filter_datum(fields: list, redaction: str, message: str, separator: str) -> str:
     """Obfuscates a log message and return it"""
-    for field in fields:
-        pattern = fr'{field}=[^{seperator}]+'
-        message = re.sub(pattern, f'{field}={redaction}', message)
-    return message
+    pattern = fr'({"|".join(fields)})=[^{separator}]+u
+    return re.sub(pattern, lambda m: f'{m.group(1)}={redaction}', message)
