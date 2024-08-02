@@ -5,7 +5,7 @@ Contains a function called hash_password that hashes a password using bcrypt.
 import bcrypt
 
 
-def hash_password(password) -> bytes:
+def hash_password(password: str) -> bytes:
     """
     Hashes a password using bcrypt.
 
