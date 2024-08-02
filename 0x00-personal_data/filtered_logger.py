@@ -124,13 +124,15 @@ def main() -> None:
     display each row under a filtered format
     """
     conn = get_db()
-    cursor = conn.cursor()
+    cursor = conn.cursor(dictionary=True)
     cursor.execute("SELECT * FROM users")
     rows = cursor.fetchall()
     logger = get_logger()
 
     for row in rows:
-        logger.info(row)
+        log_msg = ";".join([f"{key}={value}" for key, value in row.items()])
+        logger.info(log_msg)
+
     cursor.close()
     conn.close()
 
