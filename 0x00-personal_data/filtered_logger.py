@@ -6,6 +6,9 @@ the log message obfuscated.
 import logging
 import re
 from typing import List
+import os
+import mysql.connector
+from mysql.connector import connection
 
 PII_FIELDS = ("name", "email", "phone", "ssn", "password")
 
@@ -80,3 +83,34 @@ def get_logger() -> logging.Logger:
     logger.addHandler(stream_handler)
 
     return logger
+
+
+def get_db() -> connection.MySQLConnection:
+    """
+    Returns a connector to the MySQL database using
+    credentials from environment variables.
+
+    Environment Variables:
+        PERSONAL_DATA_DB_USERNAME: Username for the database (default: "root").
+        PERSONAL_DATA_DB_PASSWORD: Password for the database (default: "").
+        PERSONAL_DATA_DB_HOST: Hostname for the database
+        PERSONAL_DATA_DB_NAME: Name of the database.
+
+    Returns:
+        MySQLConnection: A MySQLConnection object.
+    """
+    # Get database credentials from environment variables with defaults
+    db_username = os.getenv('PERSONAL_DATA_DB_USERNAME', 'root')
+    db_password = os.getenv('PERSONAL_DATA_DB_PASSWORD', '')
+    db_host = os.getenv('PERSONAL_DATA_DB_HOST', 'localhost')
+    db_name = os.getenv('PERSONAL_DATA_DB_NAME')
+
+    # Connect to the database
+    conn = mysql.connector.connect(
+        user=db_username,
+        password=db_password,
+        host=db_host,
+        database=db_name
+    )
+
+    return conn
