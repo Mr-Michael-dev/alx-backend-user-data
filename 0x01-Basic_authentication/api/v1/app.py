@@ -20,6 +20,9 @@ auth = None
 auth_type = os.getenv('AUTH_TYPE')
 
 if auth_type:
+    if auth_type == 'basic_auth':
+        from api.v1.auth.basic_auth import BasicAuth
+        auth = BasicAuth()
     if auth_type == 'auth':
         from api.v1.auth.auth import Auth
         auth = Auth()
@@ -27,6 +30,8 @@ if auth_type:
 
 @app.before_request
 def before_request_handler():
+    """ Before request handler
+    """
     if auth is None:
         return
 
