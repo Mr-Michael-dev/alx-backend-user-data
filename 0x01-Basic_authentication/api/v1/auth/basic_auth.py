@@ -4,7 +4,7 @@ Module contains BasicAuth class taht inherits from Auth
 """
 from flask import request
 import base64
-from typing import List, TypeVar
+from typing import List, Tuple
 from api.v1.auth.auth import Auth
 
 
@@ -62,3 +62,29 @@ class BasicAuth(Auth):
             return decoded_credentials
         except Exception as e:
             return None
+        
+    def extract_user_credentials(self, decoded_base64_authorization_header: str) -> Tuple[str, str]:
+        """
+        Extract the username and password from the decoded Base64 string
+
+        Arguments:
+        decoded_base64_authorization_header {str} - decoded Base64 string
+
+        Returns:
+        Tuple of username and password
+        """
+        if decoded_base64_authorization_header is None:
+            return (None, None)
+
+        if not isinstance(decoded_base64_authorization_header, str):
+            return (None, None)
+
+        if ':' not in decoded_base64_authorization_header:
+            return (None, None)
+        
+        username, password = decoded_base64_authorization_header.split(':')
+        # parts = decoded_base64_authorization_header.split(':')
+        # if len(parts)!= 2:
+        #     return (None, None)
+
+        return (username, password)
