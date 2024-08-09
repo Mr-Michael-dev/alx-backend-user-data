@@ -1,6 +1,6 @@
-# Simple API
+# Simple Basic Authentication
 
-Simple HTTP API for playing with `User` model.
+Simple HTTP Simple Basic Authentication for playing with `Auth`.
 
 
 ## Files
@@ -15,6 +15,8 @@ Simple HTTP API for playing with `User` model.
 - `app.py`: entry point of the API
 - `views/index.py`: basic endpoints of the API: `/status` and `/stats`
 - `views/users.py`: all users endpoints
+- `auth/auth.py`: auth class for manageing user authentication
+- `auth/basic_auth.py`: basic_auth class for manageing user authentication from values authorisation header
 
 
 ## Setup
@@ -27,7 +29,7 @@ $ pip3 install -r requirements.txt
 ## Run
 
 ```
-$ API_HOST=0.0.0.0 API_PORT=5000 python3 -m api.v1.app
+$ API_HOST=0.0.0.0 API_PORT=5000 AUTH_TYPE=basic_auth python3 -m api.v1.app
 ```
 
 
