@@ -2,6 +2,7 @@
 """
 Module contains Auth class for authentication
 """
+from os import getenv
 from flask import request
 from typing import List, TypeVar
 
@@ -54,4 +55,26 @@ class Auth():
         """
         Get the authenticated user based on the request
         """
+        return None
+
+    def session_cookie(self, request=None):
+        """
+        Get the session cookie from the request
+        """
+        if request is None:
+            return None
+
+        if 'Cookie' not in request.headers:
+            return None
+
+        cookies = request.headers.get('Cookie')
+        if cookies is None:
+            return None
+        session_name = getenv('SESSION_NAME')
+        if session_name is None:
+            return None
+
+        for cookie in cookies.split('; '):
+            if cookie.startswith(session_name + '='):
+                return cookie.split('=', 1)[1]
         return None
