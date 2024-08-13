@@ -37,7 +37,6 @@ def login() -> str:
         response = jsonify(user.to_json())
         response.set_cookie(session_name, session_id)
         return response
-    
 
     @app_views.route('/auth_session/logout',
                      methods=['DELETE'],
@@ -50,7 +49,7 @@ def login() -> str:
         """
         from api.v1.app import auth
         res = auth.destroy_session(request)
-        if res:
+        if res is True:
             return jsonify({}), 200
         else:
             abort(404)
