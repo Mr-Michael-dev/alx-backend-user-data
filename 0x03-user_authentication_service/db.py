@@ -14,8 +14,6 @@ class DB:
     """DB class
     """
 
-
-
     def __init__(self) -> None:
         """Initialize a new DB instance
         """
@@ -33,7 +31,7 @@ class DB:
             self.__session = DBSession()
         return self.__session
 
-    def add_user(self, email: str, hashed_password: str) -> TypeVar('User'):
+    def add_user(self, email: str, hashed_password: str) -> User:
         """Add a new user to the database
         """
         new_user = User(email=email, hashed_password=hashed_password)
