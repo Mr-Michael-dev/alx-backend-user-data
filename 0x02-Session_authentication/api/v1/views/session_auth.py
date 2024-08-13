@@ -16,6 +16,7 @@ def login() -> str:
     Return:
       - a session_id
     """
+    from api.v1.app import auth
     email = request.form.get('email')
     if email is None:
         return jsonify({"error": "email missing"}), 400
@@ -30,8 +31,9 @@ def login() -> str:
     for user in users:
         if not user.is_valid_password(password):
             return jsonify({"error": "wrong password"}), 401
-        from api.v1.app import auth
+
         session_id = auth.create_session(user_id=user.id)
         session_name = getenv('SESSION_NAME')
-        session[session_name] = session_id
-        return user.to_json()
+        response = jsonify(user.to_json())
+        response.set_cookie(session_name, session_id)
+        return response
