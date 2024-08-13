@@ -2,10 +2,11 @@
 """DB module
 """
 from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.exc import InvalidRequestError
+from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.orm.session import Session
-from typing import TypeVar
+from typing import Dict
 
 from user import Base, User
 
@@ -38,3 +39,18 @@ class DB:
         self._session.add(new_user)
         self._session.commit()
         return new_user
+
+    def find_user_by(self, **kwargs: Dict) -> User:
+        """Find a user by email or hashed_password
+        """
+        try:
+            user = self._session.query(User).filter_by(**kwargs).first()
+            if user is None:
+                raise NoResultFound
+            return user
+        except NoResultFound as e:
+            # Handle the NoResultFound exception
+            raise e
+        except InvalidRequestError as e:
+            # Handle the InvalidRequestError exception
+            raise e
