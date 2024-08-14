@@ -3,7 +3,7 @@
 """
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy.exc import InvalidRequestError
+from sqlalchemy.exc import InvalidRequestError, SQLAlchemyError
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.orm.session import Session
 from typing import Dict
@@ -53,4 +53,31 @@ class DB:
             raise e
         except InvalidRequestError as e:
             # Handle the InvalidRequestError exception
+            raise e
+
+    def update_user(self, user_id: int, **kwargs: Dict) -> None:
+        """
+        Updates a user’s attributes and then commit changes to the database.
+
+        Arguments:
+        user_id - id of user to update
+        **kwargs - key:value pairs of attributes to update
+
+        Raises:
+        ValueError if an invalid attribute is passed
+        """
+        try:
+            user = self.find_user_by(id=user_id)
+        except NoResultFound:
+            raise ValueError(f"User with id {user_id} not found")
+
+        for key, value in kwargs.items():
+            if not hasattr(user, key):
+                raise ValueError(f"Invalid attribute: {key}")
+            setattr(user, key, value)
+
+        try:
+            self._session.commit()
+        except SQLAlchemyError as e:
+            self._session.rollback()
             raise e
