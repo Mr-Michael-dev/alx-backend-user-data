@@ -3,6 +3,7 @@
 This module contains auth logic for the API
 """
 import bcrypt
+from sqlalchemy.orm.exc import NoResultFound
 from db import DB
 from user import User
 
@@ -36,7 +37,7 @@ class Auth:
 
         Arguments:
         email (str) - user's email
-        passowrd (str) - user's password
+        password (str) - user's password
 
         Returns:
         user object
@@ -56,7 +57,7 @@ class Auth:
 
         Arguments:
         email (str) - user's email
-        passowrd (str) - user's password
+        password (str) - user's password
 
         Returns:
         True if user matches, otherwise false
@@ -65,7 +66,7 @@ class Auth:
             user = self._db.find_user_by(email=email)
         except NoResultFound:
             return False
-        saved_password = user.hashed_password.encode('utf-8')
+        saved_password = user.hashed_password
         if bcrypt.checkpw(password.encode('utf-8'), saved_password):
             return True
 
