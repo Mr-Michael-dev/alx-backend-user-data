@@ -51,14 +51,13 @@ class Auth:
         Returns:
         user object
         """
-        user = self._db._session.query(User).filter_by(email=email).first()
-
-        if user is None:
+        try:
+            user = self._db.find_user_by(email=email)
+            raise ValueError(f"User {email} already exists")
+        except NoResultFound:
             hashed_pwd = _hash_password(password)
             new_user = self._db.add_user(email, hashed_pwd)
             return new_user
-        else:
-            raise ValueError(f"User {email} already exists")
 
     def valid_login(self, email: str, password: str) -> bool:
         """
@@ -80,3 +79,23 @@ class Auth:
             return True
 
         return False
+
+    def create_session(self, email: str) -> str:
+        """
+        find the user corresponding to the email,
+        generate a new UUID and store it in the database
+
+        Arguments:
+        email (str) - user's email
+
+        Returns:
+        session_id (str) - newly generated session id
+        """
+        try:
+            user = self._db.find_user_by(email=email)
+        except NoResultFound:
+            return None
+        session_id = _generate_uuid()
+        self._db.update_user(user.id, session_id=session_id)
+
+        return session_id
