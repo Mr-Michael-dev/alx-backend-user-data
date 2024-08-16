@@ -2,7 +2,8 @@
 """
 Flask app that defines API routes
 """
-from flask import Flask, request, jsonify, abort, make_response
+from flask import Flask, request, jsonify, abort, \
+    make_response, redirect, url_for
 from auth import Auth
 
 app = Flask(__name__)
@@ -56,6 +57,27 @@ def login():
         return response
     else:
         abort(401)
+
+
+@app.route("/sessions", methods=["DELETE"], strict_slashes=False)
+def logout():
+    """
+    destroy the session for the user, remove the session ID from the cookie
+
+    Returns:
+    JSON payload of the form
+    """
+    session_id = request.cookies.get("session_id")
+
+    if session_id:
+        user = AUTH.get_user_from_session_id(session_id)
+        if user:
+            AUTH.destroy_session(user.id)
+            response = make_response(redirect(url_for('home')))
+            response.delete_cookie("session_id")
+            return response
+    else:
+        abort(403)
 
 
 if __name__ == "__main__":
